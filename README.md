@@ -6,7 +6,7 @@ via Coarse-to-Fine Autoregressive Prediction
 </h1>
 
 <h4 align="center"> 
-<a href='https://zhefeigong.github.io/'>Zhefei Gong</a><sup>1</sup>
+<a href='https://zhefeigong.github.io/'>Zhefei Gong</a><sup>1</sup>,
 <a href='https://dingpx.github.io/'>Pengxiang Ding</a><sup>12</sup>,
 <a href='https://scholar.google.com/citations?user=3_DtxJ8AAAAJ&hl=zh-CN'>Shangke Lyu</a><sup>1</sup>,
 <a href='https://kyonhuang.top/'>Siteng Huang</a><sup>12</sup>,
