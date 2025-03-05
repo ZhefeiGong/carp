@@ -6,20 +6,20 @@ We use [MimicGen](https://mimicgen.github.io/) as our multi-task benchmark, sele
 
 ## 🛠️ Setup
 
-* build [miniforge](https://github.com/conda-forge/miniforge#mambaforge) virtual environment.
+* Build [miniforge](https://github.com/conda-forge/miniforge#mambaforge) virtual environment.
 ```bash
 curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
 bash Miniforge3-$(uname)-$(uname -m).sh
 ```
-* build `carp-mt` environment.
+* Build `carp-mt` environment.
 ```bash
 conda env create -f environment.yaml
 ```
-* for `mujoco` on `Ubuntu 20.04`, we need to install the following apt packages:
+* For `mujoco` on `Ubuntu 20.04`, we need to install the following apt packages:
 ```bash
 sudo apt install -y libosmesa6-dev libgl1-mesa-glx libglfw3 patchelf
 ```
-* for [MimicGen](https://mimicgen.github.io/docs/introduction/installation.html), we need to install the following additional dependencies from source:
+* For [MimicGen](https://mimicgen.github.io/docs/introduction/installation.html), we need to install the following additional dependencies from source:
 ```bash
 git clone https://github.com/NVlabs/mimicgen.git
 cd mimicgen
@@ -40,8 +40,8 @@ pip install -e .
 
 ## 📊 Dataset
 
-* download the MimicGen dataset [here](https://huggingface.co/datasets/amandlek/mimicgen_datasets/tree/main/core).
-* convert the `relative-action` dataset to an `absolute-action` dataset using the following command:
+* Download the MimicGen dataset [here](https://huggingface.co/datasets/amandlek/mimicgen_datasets/tree/main/core).
+* Convert the `relative-action` dataset to an `absolute-action` dataset using the following command:
 ```bash
 bash ./scripts/misc/dataset_transform.sh
 ```
@@ -122,7 +122,7 @@ carp/multitask
 
 ## 😵‍💫 Troubleshooting
 
-* `Exception: Environment Coffee_D0 not found.`: the issue arises from the import mimicgen error, likely caused by version incompatibilities. For more details, please refer to this [discussion](https://github.com/NVlabs/mimicgen/issues/18).
+* `Exception: Environment Coffee_D0 not found.`: The issue arises from the import mimicgen error, likely caused by version incompatibilities. For more details, please refer to this [discussion](https://github.com/NVlabs/mimicgen/issues/18).
 
 
 
