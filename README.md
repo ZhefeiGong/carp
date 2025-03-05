@@ -13,7 +13,7 @@ via Coarse-to-Fine Autoregressive Prediction
 <a href='https://github.com/ZhefeiGong'>Mingyang Sun</a><sup>12</sup>,
 <a href='https://github.com/ZhefeiGong'>Wei Zhao</a><sup>1</sup>,<br>
 <a href='https://zhaoxinf.github.io/'>Zhaoxin Fan</a><sup>3</sup>,
-<a href='https://en.westlake.edu.cn/faculty/donglin-wang.html'>Donglin Wang</a><sup>1✉</sup>,
+<a href='https://en.westlake.edu.cn/faculty/donglin-wang.html'>Donglin Wang</a><sup>1✉</sup>
 
 
 
