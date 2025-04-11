@@ -50,7 +50,7 @@ for i in "${!tasks[@]}"; do
   task_id=${task_ids[$i]}
   
   python eval_vae.py \
-      --is_vis_detail False \
+      --is_vis_detail \
       --save_path "$save_path" \
       --dataset_path "$dataset_path" \
       --vae_ckpt_paths "${vae_ckpt_paths[@]}"

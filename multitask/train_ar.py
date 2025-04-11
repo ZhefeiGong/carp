@@ -498,6 +498,11 @@ def main_training():
                             for worst_json in worst_jsons: # remove all of the json
                                 if os.path.exists(worst_json):
                                     os.remove(worst_json)
+                    else:
+                        # delete the json saved before when current ckpt is not good enough
+                        for worst_json in local_out_jsons:
+                            if os.path.exists(worst_json):
+                                os.remove(worst_json) # remove the json
                 else: # save every evaluation
                     local_out_ckpt = os.path.join(args.local_out_dir_path, f'ar-ep_{ep+1}.pth')
                     torch.save({

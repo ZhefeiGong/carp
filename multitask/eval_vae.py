@@ -207,7 +207,7 @@ def build_env(dataset_path,
                 assert isinstance(env.env, VideoRecordingWrapper)
                 env.env.video_recoder.stop()
                 env.env.file_path = None
-                if is_vis_detail:
+                if enable_render:
                     filename = pathlib.Path(save_path).joinpath(
                         'media', wv.util.generate_id() + ".mp4")
                     filename.parent.mkdir(parents=False, exist_ok=True)
@@ -229,7 +229,7 @@ def build_env(dataset_path,
                 assert isinstance(env.env, VideoRecordingWrapper)
                 env.env.video_recoder.stop()
                 env.env.file_path = None
-                if is_vis_detail:
+                if enable_render:
                     filename = pathlib.Path(save_path).joinpath(
                         'media', wv.util.generate_id() + ".mp4")
                     filename.parent.mkdir(parents=False, exist_ok=True)
@@ -399,7 +399,7 @@ def get_args():
     parser.add_argument("--env_n_action_steps", type=int, default=16, help="Number of action steps")
     parser.add_argument("--slice_size", type=int, default=16, help="Slice size")
     parser.add_argument("--batch_size", type=int, default=2, help="Batch size")
-    parser.add_argument("--is_vis_detail", type=bool, default=False, help="Whether visualize the evaluation results here")
+    parser.add_argument("--is_vis_detail", action='store_true', help="Whether visualize the evaluation results here")
     args = parser.parse_args()
     return args
 

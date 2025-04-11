@@ -14,9 +14,9 @@ source /activate/your/miniforge3/here
 conda activate carp-mt
 
 python utils/robomimic_dataset_conversion.py \
---input 'path/to/core/coffee_d0.hdf5' \
---output 'path/to/core/coffee_d0_abs.hdf5' \
---eval_dir 'path/to/evaluation/output' \
+--input path/to/core/coffee_d0.hdf5 \
+--output path/to/core/coffee_d0_abs.hdf5 \
+--eval_dir path/to/evaluation/output \
 --num_workers 32 \
 
 python utils/robomimic_dataset_conversion.py \
