@@ -21,7 +21,7 @@ sudo apt install -y libosmesa6-dev libgl1-mesa-glx libglfw3 patchelf
 
 ## 📊 Dataset
 
-* Download the Robomimic datasets in both [state-based](https://diffusion-policy.cs.columbia.edu/data/training/robomimic_lowdim.zip) and [image-based](https://diffusion-policy.cs.columbia.edu/data/training/robomimic_image.zip) formats. The Kitchen dataset can be downloaded [here](https://diffusion-policy.cs.columbia.edu/data/training/kitchen.zip). The PushT dataset can be downloaded [here](https://diffusion-policy.cs.columbia.edu/data/training/pusht.zip)
+* Download the Robomimic datasets in both [state-based](https://diffusion-policy.cs.columbia.edu/data/training/robomimic_lowdim.zip) and [image-based](https://diffusion-policy.cs.columbia.edu/data/training/robomimic_image.zip) formats. The Kitchen dataset can be downloaded [here](https://diffusion-policy.cs.columbia.edu/data/training/kitchen.zip). The PushT dataset can be downloaded [here](https://diffusion-policy.cs.columbia.edu/data/training/pusht.zip).
 * For Robomimic, we use the `absolute-action` setting (dataset files ending with `abs.hdf5`). If you are using `relative-action` datasets instead, please refer to `singletask/env/dataset/robomimic_dataset_conversion.py` for conversion reference.
 
 ## 🚄 Training
