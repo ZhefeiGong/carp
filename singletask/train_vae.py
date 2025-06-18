@@ -12,7 +12,7 @@ import dist
 from utils import arg_util, misc
 from utils.data_sampler import DistInfiniteBatchSampler, EvalDistributedSampler
 from utils.misc import auto_resume
-from utils.train_util import load_robomimic_lowdim_dataset, load_kitchen_lowdim_dataset
+from utils.train_util import load_robomimic_lowdim_dataset, load_kitchen_lowdim_dataset, load_pusht_lowdim_dataset
 
 class NullDDP(torch.nn.Module):
     """
@@ -60,6 +60,9 @@ def build_everything(args: arg_util.Args):
     if 'kitchen' in args.data_name:
         # kitchen lowdim data
         dataset_train, dataset_val, normalizer = load_kitchen_lowdim_dataset(data_path=args.data_path, seed=args.seed, is_only_act=True)
+    elif 'pusht' in args.data_name:
+        # pusht lowdim data
+        dataset_train, dataset_val, normalizer = load_pusht_lowdim_dataset(data_path=args.data_path, seed=args.seed, is_only_act=True)
     else: 
         # robomimic lowdim data
         dataset_train, dataset_val, normalizer = load_robomimic_lowdim_dataset(data_path=args.data_path, seed=args.seed, is_only_act=True)
@@ -125,6 +128,7 @@ def build_everything(args: arg_util.Args):
         V=args.vocab_size, 
         Cvae=args.vocab_ch, 
         ch=args.vch, 
+        ch_mult=args.vch_mult_ls,
         action_dim=1, # here we train a separate vqvae for each dimension
         num_actions=args.act_horizon,
         dropout=args.vdrop,
@@ -133,7 +137,7 @@ def build_everything(args: arg_util.Args):
         using_znorm=args.vqnorm,
         quant_conv_ks=3, # fixed here
         quant_resi=args.vqresi,
-        share_quant_resi=4, # fixed here
+        share_quant_resi=len(args.patch_nums),
         patch_nums=args.patch_nums,
         vae_init=args.vae_init,
         vocab_init=args.vocab_init,

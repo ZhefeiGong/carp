@@ -2,6 +2,7 @@ import torch
 import wandb
 import json
 import os
+import numpy as np
 import torch.nn as nn
 from robomimic.algo import algo_factory
 from robomimic.algo.algo import PolicyAlgo
@@ -17,10 +18,14 @@ from env.runner.kitchen_lowdim_runner import KitchenLowdimRunner
 from env.dataset.kitchen_mjl_lowdim_dataset import KitchenMjlLowdimDataset
 from env.dataset.robomimic_replay_image_dataset import RobomimicReplayImageDataset
 from env.dataset.robomimic_replay_lowdim_dataset import RobomimicReplayLowdimDataset
+from env.dataset.pusht_dataset import PushTLowdimDataset
+from env.runner.pusht_keypoints_runner import PushTKeypointsRunner
+from env.runner.pusht_keypoints_fixed_ini_runner import PushTKeypointsFixedIniRunner
 
 def load_shape_meta():
     """
-    @func:
+    @func: 
+    load the shape meta info for image-based task
     """
     shape_meta = {
         "action": {
@@ -97,6 +102,21 @@ def load_kitchen_lowdim_dataset(data_path, seed, is_only_act=False):
                                             seed=seed,
                                             val_ratio=0.02,
                                             is_only_act=is_only_act)
+    dataset_val = dataset_train.get_validation_dataset()
+    normalizer = dataset_train.get_normalizer()
+    return dataset_train, dataset_val, normalizer
+
+def load_pusht_lowdim_dataset(data_path, seed, is_only_act=False):
+    """
+    :func:
+    """
+    dataset_train = PushTLowdimDataset(horizon=16, 
+                                       # max_train_episodes=90, # NOTE: u can strict the data
+                                       pad_after=7, 
+                                       pad_before=1,
+                                       seed=seed,
+                                       val_ratio=0.02,
+                                       zarr_path=data_path)
     dataset_val = dataset_train.get_validation_dataset()
     normalizer = dataset_train.get_normalizer()
     return dataset_train, dataset_val, normalizer
@@ -262,6 +282,58 @@ def load_kitchen_lowdim_runner(output_dir, dataset_path, max_steps=280, n_obs_st
                                      robot_noise_ratio=0.1,
                                      test_start_seed=100000,
                                      train_start_seed=0)
+    return env_runner
+
+def load_pusht_lowdim_runner(output_dir, max_steps=300, n_obs_steps=2, n_action_steps=8, vis_rate=0.0, num_test=50, num_train=6):
+    """
+    :func:
+    """
+    env_runner = PushTKeypointsRunner(output_dir=output_dir,
+                                      agent_keypoints=False,
+                                      fps=10,
+                                      keypoint_visible_rate=1.0,
+                                      legacy_test=True,
+                                      max_steps=max_steps,
+                                      n_action_steps=n_action_steps,
+                                      n_envs=28, # None
+                                      n_latency_steps=0,
+                                      n_obs_steps=n_obs_steps,
+                                      n_test=num_test,
+                                      n_test_vis=int(num_test*vis_rate),
+                                      n_train=num_train,
+                                      n_train_vis=int(num_train*vis_rate),
+                                      past_action=False,
+                                      test_start_seed=100000,
+                                      train_start_seed=0)
+    return env_runner
+
+def load_pusht_lowdim_fixed_ini_runner(output_dir, max_steps=300, n_obs_steps=2, n_action_steps=8, vis_rate=0.0, num_test=100):
+    """
+    :func:
+    """
+    # goal is [256,256]
+    reset_to_state = np.array([
+        306, 206,   # agent position
+        216, 296,   # block position
+        np.pi / 4   # block rotation
+        ])
+    render_action=False
+    env_runner = PushTKeypointsFixedIniRunner(output_dir=output_dir,
+                                              agent_keypoints=False,
+                                              fps=10,
+                                              keypoint_visible_rate=1.0,
+                                              legacy_test=False,
+                                              max_steps=max_steps,
+                                              n_action_steps=n_action_steps,
+                                              n_envs=None,
+                                              n_latency_steps=0,
+                                              n_obs_steps=n_obs_steps,
+                                              n_test=num_test,
+                                              n_test_vis=int(num_test*vis_rate),
+                                              past_action=False,
+                                              test_start_seed=100000,
+                                              reset_to_state=reset_to_state,
+                                              render_action=render_action,)
     return env_runner
 
 def save_runner_json(runner_log,output_dir):

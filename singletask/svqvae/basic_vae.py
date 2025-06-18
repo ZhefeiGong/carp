@@ -113,7 +113,7 @@ class Encoder(nn.Module):
         self.down_2.block_1 = ConvBlock(in_channels=self.ch*self.ch_mult[0], num_groups=1, out_channels=self.ch*self.ch_mult[1], dropout=dropout) # B,4*ch,4,1
         self.down_2.downsample = Downsample2x(in_channels=self.ch*self.ch_mult[1]) # B,4*ch,4,1
         self.down_2.block_2 = ConvBlock(in_channels=self.ch*self.ch_mult[1], num_groups=1, out_channels=self.ch*self.ch_mult[1], dropout=dropout) # B,4*ch,4,1
-
+    
         # conv out
         self.norm_out = Normalize(num_channels=self.ch*self.ch_mult[1], num_groups=1) # B,4*ch,4,1
         self.conv_out = torch.nn.Conv2d(self.ch*self.ch_mult[1], self.z_channels, kernel_size=(3,1), stride=(1,1), padding=(1,0)) # B,z_channels,4,1

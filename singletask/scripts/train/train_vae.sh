@@ -18,10 +18,14 @@ cat /proc/cpuinfo| grep "cpu cores"| uniq
 # the name of each dimension
 declare -a dims=("x" "y" "z" "r1" "r2" "r3" "r4" "r5" "r6" "gripper") # e.g. for robomimic
 # declare -a dims=("x" "y" "z" "r1" "r2" "r3" "r4" "g1" "g2") # e.g. for kitchen
+# declare -a dims=("x" "y") # e.g. for pusht
+
 
 # dataset path
 data_path="/path/to/dataset/low_dim_abs.hdf5" # e.g. for robomimic
 # data_path="/path/to/dataset/kitchen/kitchen_demos_multitask" # e.g. for kitchen
+# data_path="/path/to/dataset/pusht/pusht_cchi_v7_replay.zarr" # e.g. for pusht
+
 
 ############################################################################################################################################
 export OMP_NUM_THREADS=16
@@ -46,3 +50,8 @@ for dim in "${dims[@]}"; do
     
     ((dim_index++))
 done
+
+
+# --pn '1_2_3_4' or '1_2_4' or '2_4', ...  # specifies VQ-VAE scales; the final scale must match the action feature dimension
+
+

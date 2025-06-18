@@ -10,6 +10,7 @@ def build_vae_disc(
     V=512, 
     Cvae=8, 
     ch=2, 
+    ch_mult=(2, 4),
     action_dim=10,
     num_actions=16,
     dropout=0.0,
@@ -47,6 +48,7 @@ def build_vae_disc(
         # encoder | decoder
         z_channels=Cvae,
         ch=ch, 
+        ch_mult=ch_mult,
         action_dim=action_dim,
         num_actions=num_actions,
         dropout=dropout,

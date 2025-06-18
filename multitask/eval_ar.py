@@ -58,7 +58,7 @@ def main(output_dir, ar_ckpt, dataset_path, nactions, max_steps, task_id):
         using_znorm=args['vqnorm'],
         quant_conv_ks=3, # fixed
         quant_resi=args['vqresi'],
-        share_quant_resi=4, # fixed
+        share_quant_resi=len(args['patch_nums']),
         ## coarse-to-fine autoregressive prediction
         obs_encoder = obs_encoder,
         depth=args['tdepth'], 

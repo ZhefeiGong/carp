@@ -82,5 +82,14 @@ OMP_NUM_THREADS=16 torchrun --nproc_per_node=1 --nnodes=1 train_ar.py \
 # export LD_LIBRARY_PATH=/path/to/envs/carp-st/lib/python3.9/site-packages/mujoco # probably need this
 # --data_path="/path/to/dataset/kitchen/kitchen_demos_multitask"
 # --act_dim_names 'x' 'y' 'z' 'r1' 'r2' 'r3' 'r4' 'g1' 'g2'
+# --vae_ckpt_paths ...
 
+
+# e.g. for pusht state
+# --data_path="/path/to/dataset/pusht/pusht_cchi_v7_replay.zarr"
+# --act_dim_names 'x' 'y'
+# --vae_ckpt_paths ...
+
+
+# --pn '1_2_3_4' or '1_2_4' or '2_4', ...  # specifies VQ-VAE scales; the final scale must match the action feature dimension
 

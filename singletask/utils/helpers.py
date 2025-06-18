@@ -1,4 +1,11 @@
+import os
+import cv2
 import torch
+import random
+import numpy as np
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
+import matplotlib.colors as colors
 from torch import nn as nn
 from torch.nn import functional as F
 
@@ -57,3 +64,68 @@ class DropPath(nn.Module):  # taken from timm
     
     def extra_repr(self):
         return f'(drop_prob=...)'
+
+
+def load_trajectories_from_folder(folder_path):
+    trajectories = []
+    for file_name in sorted(os.listdir(folder_path)):
+        if file_name.endswith('.npy'):
+            file_path = os.path.join(folder_path, file_name)
+            traj = np.load(file_path)  # shape is (T, 2) or (T, D)
+            if traj.ndim >= 2 and traj.shape[1] >= 2:
+                traj_2d = traj[:, :2]  # only x, y
+                trajectories.append(traj_2d)
+    return trajectories
+
+
+def draw_traj_pic(trajectories, save_path, background_path=None, vis_len=40):
+    # initialize parameters
+    def scale(value, img_dim, data_min=0.0, data_max=512.0):
+        return int((value - data_min) / (data_max - data_min) * (img_dim - 1))
+    # w/ background
+    img_dim=512
+    plt.figure(figsize=(img_dim, img_dim), dpi=1)
+    ax = plt.gca()
+    if background_path is not None:
+        background = plt.imread(background_path)
+        if background.shape[0] != img_dim or background.shape[1] != img_dim:
+            from PIL import Image
+            background = Image.fromarray((background * 255).astype(np.uint8))
+            background = background.resize((img_dim, img_dim))
+            background = np.asarray(background).astype(np.float32) / 255.0
+        ax.imshow(background, extent=[0, img_dim, img_dim, 0])  # extent -> set axis rage
+    else:
+        ax.imshow(np.ones((img_dim, img_dim, 3)), extent=[0, img_dim, img_dim, 0])
+    # set
+    plt.xlim(0, img_dim)
+    plt.ylim(0, img_dim)
+    ax.invert_yaxis()
+    # draw trajectory
+    for trajectory_raw in trajectories:
+        trajectory = trajectory_raw[:vis_len]
+        cmap = cm.get_cmap('plasma')
+        norm = colors.Normalize(vmin=0, vmax=len(trajectory) - 1)
+        for i in range(len(trajectory) - 1):
+            x1, y1 = scale(trajectory[i][0], img_dim), scale(trajectory[i][1], img_dim)
+            x2, y2 = scale(trajectory[i+1][0], img_dim), scale(trajectory[i+1][1], img_dim)
+            color = cmap(norm(i))
+            plt.plot([x1, x2], [y1, y2], color=color, linewidth=100)
+    # save picture
+    plt.axis('off')
+    plt.tight_layout()
+    plt.savefig(save_path)
+
+
+def extract_first_frame_from_random_video(folder_path, trj_bkg_path):
+    mp4_files = [f for f in os.listdir(folder_path) if f.endswith('.mp4')]
+    if not mp4_files:
+        raise FileNotFoundError("No .mp4 files found in the specified directory.")
+    selected_video = random.choice(mp4_files)
+    video_path = os.path.join(folder_path, selected_video)
+    cap = cv2.VideoCapture(video_path)
+    success, frame = cap.read()
+    cap.release()
+    if not success:
+        raise RuntimeError(f"Failed to read the first frame from {selected_video}")
+    cv2.imwrite(trj_bkg_path, frame)
+

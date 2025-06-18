@@ -12,6 +12,7 @@ class VQVAE(nn.Module):
         # encoder | decoder
         z_channels=8, # 
         ch=2, # 
+        ch_mult=(2, 4), #
         action_dim=1, # 
         num_actions=16, # 
         dropout=0.0,
@@ -35,7 +36,7 @@ class VQVAE(nn.Module):
         
         ddconfig = dict(            
             ch=ch, 
-            ch_mult=(2, 4), 
+            ch_mult=ch_mult, 
             in_channels=1,
             z_channels=z_channels, 
             action_dim=1,
@@ -99,19 +100,18 @@ class VQVAE(nn.Module):
         List[Bl]
         """
         f = self.quant_conv(self.encoder(inp_no_grad)) # f has shape [batch_size, 8, 4, 1]
-        idxBl = self.quantize.f_to_idxBl_or_fhat(f, to_fhat=False, v_patch_nums=v_patch_nums) # idxBl has shape []
+        idxBl = self.quantizer.f_to_idxBl_or_fhat(f, to_fhat=False, v_patch_nums=v_patch_nums) # idxBl has shape []
         return idxBl
     
     def load_state_dict(self, state_dict: Dict[str, Any], strict=True, assign=False, using_znorm = False):
-
         """
         @func:
         load the model and save to weight
         """ 
         self.quantizer.using_znorm = using_znorm
-        if 'quantize.ema_vocab_hit_SV' in state_dict and state_dict['quantize.ema_vocab_hit_SV'].shape[0] != self.quantize.ema_vocab_hit_SV.shape[0]:
-            state_dict['quantize.ema_vocab_hit_SV'] = self.quantize.ema_vocab_hit_SV
+        if 'quantizer.ema_vocab_hit_SV' in state_dict and state_dict['quantizer.ema_vocab_hit_SV'].shape[0] != self.quantizer.ema_vocab_hit_SV.shape[0]:
+            state_dict['quantizer.ema_vocab_hit_SV'] = self.quantizer.ema_vocab_hit_SV
         return super().load_state_dict(state_dict=state_dict, strict=strict, assign=assign) # assign=assign | for pytorch >= 2.1.0
-
+    
 
 

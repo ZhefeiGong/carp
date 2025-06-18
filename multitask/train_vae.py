@@ -131,7 +131,7 @@ def build_everything(args: arg_util.Args):
         using_znorm=args.vqnorm,
         quant_conv_ks=3, # fixed here
         quant_resi=args.vqresi,
-        share_quant_resi=4, # fixed here
+        share_quant_resi=len(args.patch_nums),
         patch_nums=args.patch_nums,
         vae_init=args.vae_init,
         vocab_init=args.vocab_init,

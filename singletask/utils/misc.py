@@ -1,18 +1,19 @@
-import datetime
-import functools
-import glob
 import os
-import subprocess
 import sys
 import time
-from collections import defaultdict, deque
-from typing import Iterator, List, Tuple
-import numpy as np
 import pytz
-import torch
-import torch.distributed as tdist
 import dist
+import glob
+import torch
+import datetime
+import functools
+import subprocess
+import numpy as np
+import torch.distributed as tdist
 from utils import arg_util
+from typing import Iterator, List, Tuple
+from collections import defaultdict, deque
+
 
 os_system = functools.partial(subprocess.call, shell=True)
 def echo(info):
@@ -459,4 +460,5 @@ def create_npz_from_sample_folder(sample_folder: str):
     np.savez(npz_path, arr_0=samples)
     print(f'Saved .npz file to {npz_path} [shape={samples.shape}].')
     return npz_path
+
 

@@ -6,6 +6,7 @@ from functools import partial
 from typing import Optional, Tuple, Union, List
 from CFAP.basic_ar import AdaLNBeforeHead, AdaLNSelfAttn
 from env.common.pytorch_util import dict_apply
+from utils.helpers import sample_with_top_k_top_p_
 
 class SharedAdaLin(nn.Linear):
     """
@@ -35,12 +36,16 @@ class Coarse2FineAutoRegressor(nn.Module):
         patch_nums=(1, 2, 3, 4),
         n_obs_steps=1,
         obs_dim=23,
+        sample_top_k=1,
     ):
         
         super().__init__()
         
         #### action dimension
         self.action_dim = action_dim
+
+        #### the top k sample during inference process
+        self.sample_top_k = sample_top_k
         
         #### observation encoder | borrow from `hybrid policy` of robomimic
         self.obs_encoder = obs_encoder
@@ -172,7 +177,10 @@ class Coarse2FineAutoRegressor(nn.Module):
             for b in self.blocks:
                 x = b(x=x, cond_BD=cond_BD_or_gss, attn_bias=None)
             logits_BlV = self.get_logits(x, cond_BD) # [B,self.patch_nums[si]*1,V]
-            idx_Bl = logits_BlV.data.argmax(dim=-1) # maximize
+            if self.sample_top_k == 1:
+                idx_Bl = logits_BlV.data.argmax(dim=-1) # NOTE: get the sample with highest maximum probability
+            else:
+                idx_Bl = sample_with_top_k_top_p_(logits_BlV, rng=None, top_k=self.sample_top_k, top_p=0, num_samples=1)[:, :, 0] # NOTE: sample
             h_BChw = vae_proxy.idxBl_to_embeddings(idx_Bl) # [B, self.patch_nums[si]*1, Cvae]
             h_BChw = h_BChw.transpose_(1, 2).reshape(B, self.Cvae, pn, 1) # [B, Cvae, pn, 1]
             f_hat, next_token_map = vae_proxy.get_next_autoregressive_input(si, len(self.patch_nums), f_hat, h_BChw) # [B,Cvae,last_pn,1] | [B,Cvae,next_pn,1]

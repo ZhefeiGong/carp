@@ -21,55 +21,57 @@ from typing import List
 
 class Args(Tap):
     
-    #### 🔥Setting🔥
-    model_name: str = '/set/your/model/name/here'                           # 🌞 the class name of the model 🌞
+    #### Setting
+    model_name: str = '/set/your/model/name/here'                           # the class name of the model
     obs_dim: int = 137                                                      # [automatically set; don't specify this] the dimension of the state-based observation feature -> can:46(23) / square:46(23) / lift:38(19) / kitchen:120(60)
-    vae_ckpt_paths: List[str] = ['/path/to/each/vae/ckpt']                  # 🌞 the path of all vae 🌞
-    data_path: str = '/path/to/each/dataset'                                # 🌞 the data we're gonna use 🌞
+    vae_ckpt_paths: List[str] = ['/path/to/each/vae/ckpt']                  # the path of all vae
+    data_path: str = '/path/to/each/dataset'                                # the data we're gonna use
     data_name: str = ''                                                     # [automatically set; don't specify this]
-    act_dim_sep: int = 0                                                    # 🌞 set to train one specific dimension of the action 🌞
+    act_dim_sep: int = 0                                                    # set to train one specific dimension of the action
     act_dim: int = 10                                                       # [automatically set; don't specify this]
-    act_dim_names: List[str] = ['x','y','z','r1','r2','r3','r4','r5','r6','gripper'] # 🌞 set to the dimension of the action 🌞
-    # act_dim_names: List[str] = ['x','y','z','r1','r2','r3','r4','g1','g2'] # 🌞 set to the dimension of the action 🌞
-    act_horizon: int = 16                                                   # 🌞 the horizon of the action sequence 🌞
-    exp_name: str = '/set/your/experiment/name/here'                        # 🌞 the name of this experiment 🌞
-    saving_interval: int = 10                   # 🌞 the rollout and evaluation time interval 🌞
-    topk: int = 5                               # 🌞 the topk ckpts we need save🌞
-    is_rollout_during_train = False             # 🌞 whether rollout during each evaluation 🌞 
+    act_dim_names: List[str] = ['x','y','z','r1','r2','r3','r4','r5','r6','gripper']    # set to the dimension of the action | robomimic
+    # act_dim_names: List[str] = ['x','y','z','r1','r2','r3','r4','g1','g2']            # set to the dimension of the action | kitchen
+    # act_dim_names: List[str] = ['x','y']                                              # set to the dimension of the action | pusht
+    act_horizon: int = 16                                                   # the horizon of the action sequence
+    exp_name: str = '/set/your/experiment/name/here'                        # the name of this experiment
+    saving_interval: int = 10                   # the rollout and evaluation time interval
+    topk: int = 5                               # the topk ckpts we need save
+    is_rollout_during_train = False             # whether rollout during each evaluation 
     # NOTE: Training with rollout evaluation is likely to slow down significantly, especially for multi-task learning.  
     #       To speed up training, you can set this to False. After training is complete,  
     #       you can perform rollouts using eval_ar.sh.
     
-    #### 🔥MSAT🔥
+    #### MSAT
     # vae training
     vfast: int = 0       # torch.compile VAE; =0: not compile; 1: compile with 'reduce-overhead'; 2: compile with 'max-autotune'
-    vblr: float = 3e-4   # learning rate | 🌞
-    vlr: float = None    # lr = base lr * (bs / 256) | 🌞
-    vwd: float = 0.005   # weight decay ｜ 🌞 
-    vwde: float = 0      # weight decay end | 🌞
+    vblr: float = 3e-4   # learning rate |
+    vlr: float = None    # lr = base lr * (bs / 256) |
+    vwd: float = 0.005   # weight decay ｜ 
+    vwde: float = 0      # weight decay end |
     vclip: float = 10.   # 
     vema: float=0.9999   # 
-    vwp: float = 0       # warm up | 🌞
-    vwp0: float = 0.005  # initial lr ratio at the begging of lr warm up | 🌞
-    vwpe: float = 0.3    # final lr ratio at the end of training | 🌞
+    vwp: float = 0       # warm up |
+    vwp0: float = 0.005  # initial lr ratio at the begging of lr warm up |
+    vwpe: float = 0.3    # final lr ratio at the end of training |
     vsche: str = 'cos'   #
-    vdrop: float = 0.0          # 🌞 default = 0.0 🌞
+    vdrop: float = 0.0          # default = 0.0
     vopt_beta: str = '0.5_0.9'  # 
     vae_init: float = -0.5      # <0: xavier_normal_(gain=abs(init)); >0: trunc_normal_(std=init)
     vocab_init: float = -1      # <0: uniform(-abs(init)*base, abs(init)*base), where base = 20/vocab_size; >0: trunc_normal_(std=init)
     # vae structure
-    vocab_size: int = 512     # 🌞 default=512 🌞
-    vocab_ch: int = 8         # 🌞 default=8 🌞
-    vch: int = 2              # 🌞 default=2 🌞
+    vocab_size: int = 512     # default=512
+    vocab_ch: int = 8         # default=8
+    vch: int = 2              # default=2
+    vch_mult: str = '2_4'     # adjust according to act_horizon, which compresses the horizon dimension into the feature dimension -> /2/2
     vqresi: float = 0.5       #
     vqbeta: float = 0.25      #
-    vqnorm: bool = True       # 🌞 vqnorm(True): cosine similarity | vqnorm(False): euler similarity 🌞
+    vqnorm: bool = True       # vqnorm(True): cosine similarity | vqnorm(False): euler similarity
     
-    #### 🔥CFAP🔥
+    #### CFAP
     # ar structure
-    tdepth: int = 8         # 🌞 8 : for single-task 🌞
-    tembed: int = 64        # 🌞 64 : the embedding of ar 🌞
-    tnobs: int = 2          # 🌞 2 : the number of observation  🌞
+    tdepth: int = 8         # 8 : for single-task
+    tembed: int = 64        # 64 : the embedding of ar
+    tnobs: int = 2          # 2 : the number of observation 
     # ar transformer initialization
     tini: float = -1        # -1: automated model parameter initialization
     thd: float = 0.02       # head.w *= hd
@@ -93,10 +95,10 @@ class Args(Tap):
     fp16: int = 0           # 0: using fp32, 1: using fp16, 2: using bf16
     
     # training
-    seed: int = None        # 🌞 seed 🌞
-    bs: int = 768           # 🌞 global batch size 🌞
+    seed: int = None        # seed
+    bs: int = 768           # global batch size
     ac: int = 1             # gradient accumulation
-    ep: int = 250           # 🌞 the number of epochs 🌞
+    ep: int = 250           # the number of epochs
     device: str = 'cpu'     # [automatically set; don't specify this]
     same_seed_for_all_ranks: int = 0     # this is only for distributed sampler
     batch_size: int = 0     # [automatically set; don't specify this] batch size per GPU = round(args.bs / args.ac / dist.get_world_size() / 8) * 8
@@ -104,18 +106,25 @@ class Args(Tap):
     opt: str = 'adamw'      # type of the optimizer we use
     afuse: bool = True      # fuse for Automatic Mixed Precision (AMP)
     
+    # inference
+    sample_top_k: int = 1   # number of top tokens to sample from during inference
+    
     # other hps
     saln: bool = False      # whether to use shared adaln
     anorm: bool = True      # whether to use L2 normalized attention
     
     # scale
-    pn: str = '1_2_3_4'         # 🌞 '1_2_3_4' : action -> special for action-horizon=16 🌞
-    patch_size: int = 1         # 🌞 action default = 1 🌞
+    pn: str = '1_2_3_4'         # patch numbers for multi-scale processing. 
+                                # recommended: '1_2_3_4' for action_horizon=16 (act_feat_dim=4).
+                                # note: The last value must match the feature dimension of the action sequence (to guarantee performance).
+                                # like `1_2_4`, `2_4`, ...
+    patch_size: int = 1         # action default = 1
     patch_nums: tuple = None    # [automatically set; don't specify this] = tuple(map(int, args.pn.replace('-', '_').split('_')))
+    vch_mult_ls: tuple = None   # [automatically set; don't specify this] = tuple(map(int, args.vch_mult.replace('-', '_').split('_')))
     resos: tuple = None         # [automatically set; don't specify this] = tuple(pn * args.patch_size for pn in args.patch_nums)
     
     # data
-    workers: int = 0            # 🌞 num workers; 0: auto, -1: don't use multiprocessing in DataLoader 🌞
+    workers: int = 0            # num workers; 0: auto, -1: don't use multiprocessing in DataLoader
     
     # would be automatically set in runtime | [automatically set; don't specify this]
     cmd: str = ' '.join(sys.argv[1:])   # [automatically set; don't specify this] | save all of the args
@@ -319,6 +328,7 @@ def init_dist_and_get_args():
     
     ### update args: multi scales
     args.patch_nums = tuple(map(int, args.pn.replace('-', '_').split('_')))
+    args.vch_mult_ls = tuple(map(int, args.vch_mult.replace('-', '_').split('_')))
     args.resos = tuple(pn * args.patch_size for pn in args.patch_nums) # pn * patch_size
     
     ### update args: bs

@@ -52,6 +52,7 @@ def build(device, vae_ckpt):
         V=args['vocab_size'], 
         Cvae=args['vocab_ch'],
         ch=args['vch'],
+        ch_mult= (2, 4), # or args['vch_mult_ls'],
         action_dim=1, # NOTE: vqvae for each separate action
         num_actions=args['act_horizon'],
         dropout=args['vdrop'],
@@ -60,7 +61,7 @@ def build(device, vae_ckpt):
         using_znorm=args['vqnorm'],
         quant_conv_ks=3, # fixed here
         quant_resi=args['vqresi'],
-        share_quant_resi=4, # fixed here
+        share_quant_resi=len(args['patch_nums']),
         patch_nums=args['patch_nums'],
         vae_init=args['vae_init'],
         vocab_init=args['vocab_init'],
@@ -264,12 +265,12 @@ def run_env(env,
     loss = 0
     act_repo_raw=[]
     act_repo_vae=[]
-    act_dim = 10
+    act_dim = 10 # fix the action dimension for robomimic tasks
     while not done:
-        ##
+        ## check exit
         if act_idx >= len(actions_run):
             break
-        ##
+        ## reconstruct
         with torch.no_grad():
             ## raw
             action_raw = actions_run[act_idx] # [B,num_actions,action_dim] ｜  [B,16,7]
@@ -361,7 +362,7 @@ import argparse
 def get_args():
     parser = argparse.ArgumentParser(description="Your script description")
     parser.add_argument("--vae_ckpt_paths", type=str, required=False, nargs="+", help="path/to/the/vae/checkpoints") # NOTE: need
-    parser.add_argument("--dataset_path", type=str, required=True, help="path/to/the/dataset") # NOTE: need
+    parser.add_argument("--dataset_path", type=str, required=True, help="path/to/the/dataset") # NOTE: need | currently, only Robomimic tasks are supported for VQ-VAE evaluation
     parser.add_argument("--save_path", type=str, required=True, help="path/to/save/the/results") # NOTE: need
     parser.add_argument("--traj_indices", type=int, nargs='+', default=[23,48,51,70,93,122,156,160,181,192], help="Trajectory indices") # NOTE: you can choose randomly here within the range of the dataset
     parser.add_argument("--max_steps", type=int, default=400, help="Maximum number of steps")

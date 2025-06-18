@@ -1,7 +1,7 @@
 # CARP | Single-Task
 
 ## 🎏 Introduction
-We evaluate our method on the `lift`, `can`, and `square` tasks from [Robomimic](https://robomimic.github.io/), as well as the Franka `kitchen` task from [Relay Policy Learning](https://arxiv.org/pdf/1910.11956), following the same experimental setup as [Diffusion Policy](https://github.com/real-stanford/diffusion_policy).
+We evaluate our method on the `lift`, `can`, and `square` tasks [state-based + image-based] from [Robomimic](https://robomimic.github.io/), the Franka `kitchen` task [state-based] from [Relay Policy Learning](https://arxiv.org/pdf/1910.11956), and `pusht` task [state-based] from [Implicit Behavioral Cloning](https://arxiv.org/pdf/2109.00137). Our experimental setup closely follows that of [Diffusion Policy](https://github.com/real-stanford/diffusion_policy) for fair comparison and reproducibility.
 
 ## 🛠️ Setup
 
@@ -21,7 +21,7 @@ sudo apt install -y libosmesa6-dev libgl1-mesa-glx libglfw3 patchelf
 
 ## 📊 Dataset
 
-* Download the Robomimic datasets in both [state-based](https://diffusion-policy.cs.columbia.edu/data/training/robomimic_lowdim.zip) and [image-based](https://diffusion-policy.cs.columbia.edu/data/training/robomimic_image.zip) formats. The Kitchen dataset can be downloaded [here](https://diffusion-policy.cs.columbia.edu/data/training/kitchen.zip).
+* Download the Robomimic datasets in both [state-based](https://diffusion-policy.cs.columbia.edu/data/training/robomimic_lowdim.zip) and [image-based](https://diffusion-policy.cs.columbia.edu/data/training/robomimic_image.zip) formats. The Kitchen dataset can be downloaded [here](https://diffusion-policy.cs.columbia.edu/data/training/kitchen.zip). The PushT dataset can be downloaded [here](https://diffusion-policy.cs.columbia.edu/data/training/pusht.zip)
 * For Robomimic, we use the `absolute-action` setting (dataset files ending with `abs.hdf5`). If you are using `relative-action` datasets instead, please refer to `singletask/env/dataset/robomimic_dataset_conversion.py` for conversion reference.
 
 ## 🚄 Training
@@ -60,7 +60,7 @@ carp/singletask
 │   ├── __init__.py  # Model initialization  
 │   ├── autoreg.py  # Autoregressive model  
 │   └── basic_ar.py  # Basic implementation  
-├── env  # Robomimic and Kitchen environment dependencies  
+├── env  # Robomimic, Kitchen and PushT environment dependencies  
 ├── MSAT  # Multi-Scale Action Tokenizer  
 │   ├── __init__.py  # Model initialization  
 │   ├── quant.py  # Multi-scale quantization  

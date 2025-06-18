@@ -12,6 +12,7 @@ class MultiScaleActionTokenizer(nn.Module):
         # encoder | decoder
         z_channels=8, # the dimension of the codebook
         ch=2,
+        ch_mult=(2, 4),
         action_dim=10,
         num_actions=16,
         dropout=0.0,
@@ -33,7 +34,7 @@ class MultiScaleActionTokenizer(nn.Module):
         self.V = vocab_size
         self.vocab_size = vocab_size
         self.Cvae = z_channels
-
+        
         ### assign to combine each vqvae for each dimension
         self.action_dim = action_dim # 
         self.action_begin_end = list(range(action_dim + 1))  # includes 0 to action_dim
@@ -41,10 +42,12 @@ class MultiScaleActionTokenizer(nn.Module):
         self.action_ch = [ch] * action_dim  # all values are ch (which is 2 as default)
         
         ### x | y | z | rotation6d | gripper
+        self.act_feat_dim = num_actions // (2 ** len(ch_mult))
+        self.v_patch_nums = v_patch_nums
         self.encoders = nn.ModuleList([
             Encoder(
                 ch=self.action_ch[idx], 
-                ch_mult=(2, 4), 
+                ch_mult=ch_mult, 
                 in_channels=self.action_in_channels[idx],
                 z_channels=z_channels, 
                 action_dim=1,
@@ -53,7 +56,7 @@ class MultiScaleActionTokenizer(nn.Module):
         self.decoders = nn.ModuleList([
             Decoder(
                 ch=self.action_ch[idx], 
-                ch_mult=(2, 4), 
+                ch_mult=ch_mult, 
                 in_channels=self.action_in_channels[idx],
                 z_channels=z_channels, 
                 action_dim=1,
@@ -145,7 +148,7 @@ class MultiScaleActionTokenizer(nn.Module):
         @return: 
         List[Bl]
         """
-        idxBls = [] 
+        idxBls = []
         for i in range(self.action_dim): 
             inp_slice = inp_no_grad[:, :, :, self.action_begin_end[i]:self.action_begin_end[i+1]] 
             f = self.quant_convs[i](self.encoders[i](inp_slice)) # f has shape [batch_size, 8, 4, 1]
@@ -187,11 +190,11 @@ class MultiScaleActionTokenizer(nn.Module):
         f_hat_out, next_token_map_out = [], []
         def collect_and_concat(tensor, idx_act, limit):
             return torch.cat([tensor[:, :, idx_act + idx_si * self.action_dim:idx_act + idx_si * self.action_dim + 1, :] 
-                            for idx_si in range(limit + 1)], dim=2)
+                            for idx_si in range(limit)], dim=2)
         for idx_act in range(self.action_dim):
-            h_BChw_act = collect_and_concat(h_BChw, idx_act, si) # [B,Cvae,si,1]
-            f_hat_act = collect_and_concat(f_hat, idx_act, SN) # [B,Cvae,last_l,1]
-            f_hat_tmp, next_token_map_tmp = self.quantizers[idx_act].get_next_autoreg_input(si, SN, f_hat_act, h_BChw_act ) # [B,Cvae,last_l,1] | [B,Cvae,next_l,1]
+            h_BChw_act = collect_and_concat(h_BChw, idx_act, self.v_patch_nums[si]) # [B,Cvae,pn,1]
+            f_hat_act = collect_and_concat(f_hat, idx_act, self.act_feat_dim) # [B,Cvae,act_feat_dim,1]
+            f_hat_tmp, next_token_map_tmp = self.quantizers[idx_act].get_next_autoreg_input(si, SN, f_hat_act, h_BChw_act) # [B,Cvae,last_l,1] | [B,Cvae,next_l,1]
             f_hat_out.append(f_hat_tmp)
             next_token_map_out.append(next_token_map_tmp)
         f_hat_out = torch.cat([x.unsqueeze(3) for x in f_hat_out], dim=3).reshape(B, Cvae, -1, last_w) # [B,Cvae,last_l*action_dim,1]

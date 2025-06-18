@@ -15,7 +15,7 @@ cd /path/to/singletask
 lscpu | grep '^CPU(s):'
 cat /proc/cpuinfo| grep "cpu cores"| uniq
 
-# set the datasets to evaluate
+# set the datasets to evaluate (currently, only support robomimic tasks)
 dataset_path="/path/to/dataset/***.hdf5"
 
 # set the base folder path

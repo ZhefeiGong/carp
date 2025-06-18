@@ -11,6 +11,7 @@ def build_vae_ar(
     V=512, 
     Cvae=8, 
     ch=2, 
+    ch_mult=(2, 4),
     action_dim=10,
     dropout=0.0,
     num_actions=16,
@@ -22,15 +23,16 @@ def build_vae_ar(
     ### ar args
     obs_encoder = None,
     depth=8,
+    n_obs_steps=2,
+    obs_dim=23,
+    embed_dim=64,
+    sample_top_k=1, 
     shared_aln=False, 
     attn_l2_norm=True, 
     init_adaln=0.5, 
     init_adaln_gamma=1e-5, 
     init_head=0.02, 
     init_std=-1, # init_std < 0: automated
-    n_obs_steps=2,
-    obs_dim=23,
-    embed_dim=64,
 ) -> Tuple[MultiScaleActionTokenizer, Coarse2FineAutoRegressor]:
     """
     @func:
@@ -58,6 +60,7 @@ def build_vae_ar(
         # encoder | decoder
         z_channels=Cvae, # 
         ch=ch, # 
+        ch_mult=ch_mult,
         action_dim=action_dim, # 
         num_actions=num_actions, # 
         dropout=dropout, #
@@ -90,6 +93,7 @@ def build_vae_ar(
         patch_nums=patch_nums,
         n_obs_steps=n_obs_steps,
         obs_dim=obs_dim,
+        sample_top_k=sample_top_k,
     ).to(device)
     
     ar_wo_ddp.init_weights(init_adaln=init_adaln, 

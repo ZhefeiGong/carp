@@ -15,8 +15,10 @@ from utils.misc import auto_resume
 from torch.utils.data import DataLoader
 from utils.data_sampler import DistInfiniteBatchSampler, EvalDistributedSampler
 from utils.train_util import load_shape_meta, load_sep_vae_model, load_obs_encoder
-from utils.train_util import load_robomimic_lowdim_runner, load_robomimic_image_runner, load_kitchen_lowdim_runner
-from utils.train_util import load_robomimic_lowdim_dataset, load_robomimic_image_dataset, load_kitchen_lowdim_dataset
+from utils.train_util import load_robomimic_lowdim_runner, load_robomimic_image_runner
+from utils.train_util import load_kitchen_lowdim_runner, load_pusht_lowdim_runner
+from utils.train_util import load_robomimic_lowdim_dataset, load_robomimic_image_dataset
+from utils.train_util import load_kitchen_lowdim_dataset, load_pusht_lowdim_dataset
 from utils.train_util import save_runner_json
 
 class NullDDP(torch.nn.Module):
@@ -68,6 +70,10 @@ def build_everything(args: arg_util.Args):
         dataset_train, dataset_val, normalizer = load_kitchen_lowdim_dataset(data_path=args.data_path, 
                                                                              seed=args.seed)
         args.obs_dim = dataset_train.replay_buffer['obs'].shape[-1] # state observation = object + robot0_eef_pos(3) + robot0_eef_quat(4) + robot0_gripper_qpos(2)
+    elif 'pusht' in args.data_name:
+            dataset_train, dataset_val, normalizer = load_pusht_lowdim_dataset(data_path=args.data_path, 
+                                                                               seed=args.seed)
+            args.obs_dim = dataset_train._sample_to_data(dataset_train.replay_buffer)['obs'].shape[-1] # state observation = keypoint(9*2) + agent_pos(2) = 20
     elif 'image' in args.data_name:
         # robomimic image data
         shape_meta = load_shape_meta()
@@ -77,13 +83,13 @@ def build_everything(args: arg_util.Args):
                                                                               seed=args.seed)
         obs_encoder = load_obs_encoder(shape_meta)
         args.obs_dim = obs_encoder.output_shape()[0] # image observation = 128 + robot0_eef_pos(3) + robot0_eef_quat(4) + robot0_gripper_qpos(2)
-    else: 
+    else:
         # robomimic lowdim data
         dataset_train, dataset_val, normalizer = load_robomimic_lowdim_dataset(data_path=args.data_path, 
                                                                                seed=args.seed)
         args.obs_dim = dataset_train.replay_buffer['obs'].shape[-1] # state observation = object + robot0_eef_pos(3) + robot0_eef_quat(4) + robot0_gripper_qpos(2)
     types = str((type(dataset_train).__name__, type(dataset_val).__name__))
-
+    
     ### build the distributed validation dataset
     ld_val = DataLoader(
         dataset_val, # DatasetFolder obj
@@ -147,6 +153,7 @@ def build_everything(args: arg_util.Args):
         V=args.vocab_size, 
         Cvae=args.vocab_ch, 
         ch=args.vch, 
+        ch_mult=args.vch_mult_ls,
         action_dim=args.act_dim,
         num_actions=args.act_horizon,
         dropout=args.vdrop,
@@ -154,13 +161,14 @@ def build_everything(args: arg_util.Args):
         using_znorm=args.vqnorm,
         quant_conv_ks=3, # fixed
         quant_resi=args.vqresi,
-        share_quant_resi=4, # fixed
+        share_quant_resi=len(args.patch_nums),
         ## coarse-to-fine autoregressive prediction
         obs_encoder = obs_encoder, 
         depth=args.tdepth, 
         n_obs_steps=args.tnobs, 
         obs_dim=args.obs_dim,
         embed_dim=args.tembed,
+        sample_top_k=args.sample_top_k, 
         shared_aln=args.saln, # whether to use shared adaln
         attn_l2_norm=args.anorm, # whether to use L2 normalized attention
         init_adaln=args.taln, # for coarse-to-fine autoregressive prediction
@@ -363,7 +371,7 @@ def main_training():
     """
 
     print("🔥🔥🔥🔥 BEGIN 🔥🔥🔥🔥")
-
+    
     ### get args and update the original args
     args: arg_util.Args = arg_util.init_dist_and_get_args()
     
@@ -389,6 +397,12 @@ def main_training():
                     n_obs_steps=args.tnobs,
                     vis_rate=0.0 # no visualization here for fast evaluating
                 )
+            elif 'pusht' in args.data_name:
+                    env_runner = load_pusht_lowdim_runner(
+                        output_dir=args.runner_out_dir_path,
+                        n_obs_steps=args.tnobs,
+                        vis_rate=0.0 # no visualization here for fast evaluating
+                    )
             # robomimic image-based env
             elif 'image' in args.data_name:
                 shape_meta=load_shape_meta()

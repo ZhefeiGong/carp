@@ -30,6 +30,7 @@ via Coarse-to-Fine Autoregressive Prediction
 
 ## 🔥 News
 
+* **`2025.06.18`** We have released the [code](./singletask/) for CARP on single-task settings, supporting both state-based and image-based tasks.
 * **`2025.03.05`** We've released the [code](./multitask/) for CARP on the multi-task benchmark (image-based). Stay tuned for the upcoming release of the single-task code for both state and image-based tasks.
 * **`2024.12.09`** CARP has been released on [arXiv](https://arxiv.org/abs/2412.06782), along with a dedicated [homepage](https://carp-robot.github.io/) where you can explore its performance and architecture directly.
 
@@ -38,7 +39,7 @@ via Coarse-to-Fine Autoregressive Prediction
 
 - [x] Release paper on arXiv
 - [x] Release code based on <a href='./multitask/'>multi-task</a>
-- [ ] Release code based on <a href='./singletask/'>single-task</a> which includes both state and image-based tasks
+- [x] Release code based on <a href='./singletask/'>single-task</a> which includes both state and image-based tasks
 
 
 ## 👀 Overview

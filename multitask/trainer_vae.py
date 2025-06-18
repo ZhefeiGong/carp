@@ -19,7 +19,7 @@ class VQVAETrainer(object):
     def __init__(
         self, 
         device, 
-        normalizer : LinearNormalizer,
+        normalizer: LinearNormalizer,
         vae_wo_ddp: VQVAE,
         vae: DDP,
         vae_opt: AmpOptimizer,
@@ -130,7 +130,7 @@ class VQVAETrainer(object):
                         step=g_it)
         
         return grad_norm, scale_log2
-        
+    
     def ema_update(self, g_it):
         """
         @func: 

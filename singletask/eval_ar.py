@@ -13,6 +13,9 @@ from env.common.normalizer import LinearNormalizer
 from CFAP import build_vae_ar
 from utils.train_util import load_shape_meta,load_obs_encoder,save_runner_json
 from utils.train_util import load_kitchen_lowdim_runner, load_robomimic_lowdim_runner, load_robomimic_image_runner
+from utils.train_util import load_pusht_lowdim_runner, load_pusht_lowdim_fixed_ini_runner
+from utils.helpers import load_trajectories_from_folder, draw_traj_pic, extract_first_frame_from_random_video
+
 
 @click.command()
 @click.option('--output_dir', default='/path/to/your/output/dir', help='Output directory for results.')
@@ -21,7 +24,21 @@ from utils.train_util import load_kitchen_lowdim_runner, load_robomimic_lowdim_r
 @click.option('--nactions', default=8, type=int, help='Number of actions to execute.')
 @click.option('--max_steps', default=400, type=int, help='Maximum steps to perform.')
 @click.option('--vis_rate', default=0.0, type=float, help='visualization rate.')
-def main(output_dir, ar_ckpt, dataset_path, nactions, max_steps, vis_rate):
+@click.option('--num_test', default=50, type=int, help='Number of episode with random initialization.')
+@click.option('--num_train', default=6, type=int, help='Number of episode with initialization from train dataset.')
+@click.option('--is_mm_vis', is_flag=True, default=False, help='Whether visualize the multi-modal performance scene, only for pusht task.')
+@click.option('--sample_top_k', default=1, type=int, help='Number of top tokens to sample from during inference, only for pusht task.')
+def main(output_dir, 
+         ar_ckpt, 
+         dataset_path, 
+         nactions, 
+         max_steps, 
+         vis_rate, 
+         num_test, 
+         num_train, 
+         is_mm_vis,
+         sample_top_k, 
+         ):
     
     # build a folder
     from datetime import datetime
@@ -55,6 +72,7 @@ def main(output_dir, ar_ckpt, dataset_path, nactions, max_steps, vis_rate):
         V=args['vocab_size'], 
         Cvae=args['vocab_ch'], 
         ch=args['vch'], 
+        ch_mult= (2, 4), # or args['vch_mult_ls'],
         action_dim=args['act_dim'],
         num_actions=args['act_horizon'],
         dropout=args['vdrop'],
@@ -62,13 +80,14 @@ def main(output_dir, ar_ckpt, dataset_path, nactions, max_steps, vis_rate):
         using_znorm=args['vqnorm'],
         quant_conv_ks=3, # fixed
         quant_resi=args['vqresi'],
-        share_quant_resi=4, # fixed
+        share_quant_resi=len(args['patch_nums']),
         ## coarse-to-fine autoregressive prediction
         obs_encoder = obs_encoder,
         depth=args['tdepth'], 
         n_obs_steps=args['tnobs'],
         obs_dim=args['obs_dim'],
         embed_dim=args['tembed'],
+        sample_top_k=sample_top_k,
         shared_aln=args['saln'], # whether to use shared adaln
         attn_l2_norm=args['anorm'], # whether to use L2 normalized attention
         init_adaln=args['taln'], # for autoregressive
@@ -126,9 +145,8 @@ def main(output_dir, ar_ckpt, dataset_path, nactions, max_steps, vis_rate):
         torch.set_float32_matmul_precision('high' if tf32 else 'highest')
     print(f'[INFO] Policy Initialization Finished')
     
-    # kitchen sim env
-    num_test=50 # by default
-    num_train=6 # by default
+    ## sim env
+    # kitchen env
     if 'kitchen' in dataset_path:
         env_runner = load_kitchen_lowdim_runner(
             output_dir=output_dir,
@@ -140,6 +158,27 @@ def main(output_dir, ar_ckpt, dataset_path, nactions, max_steps, vis_rate):
             num_test=num_test,
             num_train=num_train,
         )
+    # pusht env
+    elif 'pusht' in dataset_path:
+        if is_mm_vis:
+            env_runner = load_pusht_lowdim_fixed_ini_runner(
+                output_dir=output_dir,
+                max_steps=max_steps,
+                n_obs_steps=args['tnobs'],
+                n_action_steps=nactions,
+                vis_rate=vis_rate,
+                num_test=num_test,
+            )
+        else:
+            env_runner = load_pusht_lowdim_runner(
+                output_dir=output_dir,
+                n_obs_steps=args['tnobs'],
+                max_steps=max_steps,
+                n_action_steps=nactions,
+                vis_rate=vis_rate,
+                num_test=num_test,
+                num_train=num_train,
+            )
     # robomimic image-based env
     elif 'image' in dataset_path:
         shape_meta=load_shape_meta()
@@ -155,7 +194,7 @@ def main(output_dir, ar_ckpt, dataset_path, nactions, max_steps, vis_rate):
             num_train=num_train,
         )
     # robomimic state-based env
-    else: 
+    else:
         env_runner = load_robomimic_lowdim_runner(
             output_dir=output_dir,
             dataset_path=dataset_path,
@@ -171,8 +210,19 @@ def main(output_dir, ar_ckpt, dataset_path, nactions, max_steps, vis_rate):
                                 normalizer=normalizer)
     local_out_json = os.path.join(output_dir, 'eval_log.json')
     save_runner_json(runner_log, local_out_json)
+    # save multi-modal trajectories
+    if 'pusht' in dataset_path and is_mm_vis:
+        vis_len = 40
+        trj_output_path = output_dir + '/media'
+        save_path = output_dir + "/vis_traj.png"
+        trj_bkg_path = trj_output_path + "/vis_bkg.png"
+        extract_first_frame_from_random_video(trj_output_path, trj_bkg_path)
+        trajectories = load_trajectories_from_folder(trj_output_path)
+        draw_traj_pic(trajectories, save_path, trj_bkg_path, vis_len)
+    
     
 if __name__ == '__main__':
     main()
+
 
 
