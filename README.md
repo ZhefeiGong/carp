@@ -16,14 +16,14 @@ via Coarse-to-Fine Autoregressive Prediction
 <a href='https://en.westlake.edu.cn/faculty/donglin-wang.html'>Donglin Wang</a><sup>1✉</sup>
 
 <sup>1</sup>Westlake University, <sup>2</sup>Zhejiang University, <br>
-<sup>3</sup>Beijing Advanced Innovation Center for Future Blockchain and Privacy Computing <br>
+<sup>3</sup>Beijing Advanced Innovation Center for Future Blockchain and Privacy Computing
 
 </h4>
 
-<span style="font-size: 0.6em; font-family: 'Times New Roman', Times, serif; font-weight: normal;">
-    <sup>†</sup>Project lead.
-    <sup>✉</sup>Corresponding author.
-</span>
+<p style="font-size: 0.55em; font-family: 'Times New Roman', Times, serif; font-weight: normal; margin-top: 0;">
+<sup>†</sup>Project lead.&nbsp;&nbsp;
+<sup>✉</sup>Corresponding author.
+</p>
 
 <br>
 
