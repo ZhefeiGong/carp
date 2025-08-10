@@ -15,13 +15,9 @@ via Coarse-to-Fine Autoregressive Prediction
 <a href='https://zhaoxinf.github.io/'>Zhaoxin Fan</a><sup>3</sup>,
 <a href='https://en.westlake.edu.cn/faculty/donglin-wang.html'>Donglin Wang</a><sup>1✉</sup>
 
-
 <sup>1</sup>Westlake University, <sup>2</sup>Zhejiang University, <br>
-<sup>3</sup>Beijing Advanced Innovation Center for Future Blockchain and Privacy Computing
-
-<br>
-
-<span style="font-size: 80%;">
+<sup>3</sup>Beijing Advanced Innovation Center for Future Blockchain and Privacy Computing <br>
+<span style="font-size: 50%; font-weight: normal;">
     <sup>†</sup>Project lead.
     <sup>✉</sup>Corresponding author.
 </span>
