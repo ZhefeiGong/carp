@@ -16,13 +16,13 @@ via Coarse-to-Fine Autoregressive Prediction
 <a href='https://en.westlake.edu.cn/faculty/donglin-wang.html'>Donglin Wang</a><sup>1✉</sup>
 
 <sup>1</sup>Westlake University, <sup>2</sup>Zhejiang University, <br>
-<sup>3</sup>Beijing Advanced Innovation Center for Future Blockchain and Privacy Computing <br>
-<span style="font-size: 50%; font-weight: normal;">
+<sup>3</sup>Beijing Advanced Innovation Center for Future Blockchain and Privacy Computing
+</h4>
+
+<span style="font-size: 80%; font-weight: normal;">
     <sup>†</sup>Project lead.
     <sup>✉</sup>Corresponding author.
 </span>
-
-</h4>
 
 <a href='https://arxiv.org/abs/2412.06782'><img src='https://img.shields.io/badge/ArXiv-2412.06782-red'></a> 
 <a href='https://carp-robot.github.io/'><img src='https://img.shields.io/badge/Project-Homepage-green'></a>
