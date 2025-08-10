@@ -14,16 +14,11 @@ via Coarse-to-Fine Autoregressive Prediction
 <a href='https://github.com/ZhefeiGong'>Wei Zhao</a><sup>1</sup>,<br>
 <a href='https://zhaoxinf.github.io/'>Zhaoxin Fan</a><sup>3</sup>,
 <a href='https://en.westlake.edu.cn/faculty/donglin-wang.html'>Donglin Wang</a><sup>1✉</sup>
-
-<sup>1</sup>Westlake University, <sup>2</sup>Zhejiang University, <br>
-<sup>3</sup>Beijing Advanced Innovation Center for Future Blockchain and Privacy Computing
-
 </h4>
 
-<p style="font-size: 0.35em; font-family: 'Times New Roman', Times, serif; font-weight: normal; margin-top: 0;">
-<sup>†</sup>Project lead.&nbsp;&nbsp;
-<sup>✉</sup>Corresponding author.
-</p>
+<sup>1</sup>Westlake University, <sup>2</sup>Zhejiang University, <br>
+<sup>3</sup>Beijing Advanced Innovation Center for Future Blockchain and Privacy Computing <br>
+<sup>†</sup>Project lead. <sup>✉</sup>Corresponding author.
 
 <a href='https://arxiv.org/abs/2412.06782'><img src='https://img.shields.io/badge/ArXiv-2412.06782-red'></a> 
 <a href='https://carp-robot.github.io/'><img src='https://img.shields.io/badge/Project-Homepage-green'></a>
