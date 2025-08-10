@@ -20,12 +20,10 @@ via Coarse-to-Fine Autoregressive Prediction
 
 </h4>
 
-<p style="font-size: 0.55em; font-family: 'Times New Roman', Times, serif; font-weight: normal; margin-top: 0;">
+<p style="font-size: 0.35em; font-family: 'Times New Roman', Times, serif; font-weight: normal; margin-top: 0;">
 <sup>†</sup>Project lead.&nbsp;&nbsp;
 <sup>✉</sup>Corresponding author.
 </p>
-
-<br>
 
 <a href='https://arxiv.org/abs/2412.06782'><img src='https://img.shields.io/badge/ArXiv-2412.06782-red'></a> 
 <a href='https://carp-robot.github.io/'><img src='https://img.shields.io/badge/Project-Homepage-green'></a>
