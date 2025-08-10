@@ -7,7 +7,7 @@ via Coarse-to-Fine Autoregressive Prediction
 
 <h4 align="center"> 
 <a href='https://zhefeigong.github.io/'>Zhefei Gong</a><sup>1</sup>,
-<a href='https://dingpx.github.io/'>Pengxiang Ding</a><sup>12</sup>,
+<a href='https://dingpx.github.io/'>Pengxiang Ding</a><sup>12†</sup>,
 <a href='https://scholar.google.com/citations?user=3_DtxJ8AAAAJ&hl=zh-CN'>Shangke Lyu</a><sup>1</sup>,
 <a href='https://kyonhuang.top/'>Siteng Huang</a><sup>12</sup>,
 <a href='https://github.com/ZhefeiGong'>Mingyang Sun</a><sup>12</sup>,
@@ -16,9 +16,15 @@ via Coarse-to-Fine Autoregressive Prediction
 <a href='https://en.westlake.edu.cn/faculty/donglin-wang.html'>Donglin Wang</a><sup>1✉</sup>
 
 
-
 <sup>1</sup>Westlake University, <sup>2</sup>Zhejiang University, <br>
 <sup>3</sup>Beijing Advanced Innovation Center for Future Blockchain and Privacy Computing
+
+<br>
+
+<span style="font-size: 80%;">
+    <sup>†</sup>Project lead.
+    <sup>✉</sup>Corresponding author.
+</span>
 
 </h4>
 
